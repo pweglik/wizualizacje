@@ -11,7 +11,7 @@ markers = ["x", "o", "s", "*", "^", ".", "X"]
 colors = ["red", "blue", "green", "brown", "orange", "cyan", "grey", "purple"]
 
 
-@numba.jit(nopython=True)
+# @numba.jit(nopython=True)
 def knngain(d_hd, d_ld, labels):
     # Number of data points
     N = d_hd.shape[0]
@@ -45,13 +45,13 @@ def knngain(d_hd, d_ld, labels):
     return gn, eval_auc(gn)
 
 
-@numba.jit(nopython=True)
+# @numba.jit(nopython=True)
 def eval_auc(arr):
     i_all_k = 1.0 / (np.arange(arr.size) + 1.0)
     return np.float64(arr.dot(i_all_k)) / (i_all_k.sum())
 
 
-@numba.jit(nopython=True)
+# @numba.jit(nopython=True)
 def eval_rnx(Q):
     N_1 = Q.shape[0]
     N = N_1 + 1
@@ -226,8 +226,8 @@ def viz_qa(
             leg.set_zorder(zleg)
 
     # Setting the size of the ticks labels on the x axis
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label.set_fontsize(sax)
+    # for tick in ax.xaxis.get_major_ticks():
+    #     tick.label.set_fontsize(sax)
 
     # Setting ticks length and width
     ax.tick_params(axis="both", length=lMticks, width=wMticks, which="major")
@@ -253,12 +253,12 @@ def viz_qa(
     # plt.tight_layout()
 
     # Showing the figure
-    fig.savefig(
-        "/Users/bartoszminch/Documents/Repositories/viskit/python/results/{}.png".format(
-            tit
-        ),
-        dpi=fig.dpi,
-    )
+    # fig.savefig(
+    #     "/Users/bartoszminch/Documents/Repositories/viskit/python/results/{}.png".format(
+    #         tit
+    #     ),
+    #     dpi=fig.dpi,
+    # )
 
 
 class LocalMetric:
