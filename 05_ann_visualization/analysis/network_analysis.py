@@ -150,6 +150,12 @@ def compare_projections(datatype, model_name, n_layer, label, size=2000):
     # Use parameters layer_bt, layer_at and label_test
     # Finally, use plot_new_neuron_projection function
 
+    hue_bt = np.max(layer_bt, axis=1)
+    hue_at = np.max(layer_at, axis=1)
+
+    plot_new_neuron_projection(x_bt, hue_bt)
+    plot_new_neuron_projection(x_at, hue_at)
+
 
 def plot_discriminative_map(activations, Y_test, size):
     palette = sns.color_palette("bright", 10)

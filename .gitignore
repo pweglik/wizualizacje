@@ -1,3 +1,6 @@
 lab2_images
 __pycache__
 .ipynb_checkpoints
+cifar_cnn
+cifar_mlp
+mnist_cnn
