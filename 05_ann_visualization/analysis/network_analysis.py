@@ -8,7 +8,7 @@ from datashader.bundling import hammer_bundle
 from sklearn.manifold import TSNE
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras import backend as K
+from keras.models import Model
 
 from network.constants import TSNE_PATH_PREFIX
 from network.data_loader import *
@@ -34,27 +34,27 @@ def plot_history(network_history):
 
 def get_activations_mlp(model, data, size):
     layer_indices = [0, 2, 4, 6]
-    layer_output = K.function(
-        [model.layers[0].input], [model.layers[i].output for i in layer_indices]
+    layer_output = Model(inputs=model.inputs,
+        outputs=[model.layers[i].output for i in layer_indices]
     )
     return layer_output([data[:size, :]])
 
 
 def get_activations_cnn(model, data, size=None):
     layer_indices = [9, 10]
-    layer_output = K.function(
-        [model.layers[0].input], [model.layers[i].output for i in layer_indices]
+    layer_output = Model(inputs=model.inputs,
+        outputs=[model.layers[i].output for i in layer_indices]
     )
     return layer_output([data[:size, :]])
 
 
 def show_tsne(
-        model_name: str,
-        epochs: int,
-        X: np.ndarray,
-        Y: np.ndarray,
-        Y_predicted: Optional[np.ndarray] = None,
-        init: Optional[str] = None,
+    model_name: str,
+    epochs: int,
+    X: np.ndarray,
+    Y: np.ndarray,
+    Y_predicted: Optional[np.ndarray] = None,
+    init: Optional[str] = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
     scaler = StandardScaler()
     data = scaler.fit_transform(X)
@@ -215,13 +215,22 @@ def show_seq_projections(datatype, model_name, n_layer, epoch, size):
         layer_at = get_activations_cnn(model_at, X_test, size)[n_layer - 1]
 
     file_path = TSNE_PATH_PREFIX + model_name + "_" + str(epoch) + ".npy"
+    init = None
     if os.path.exists(file_path):
         init = np.load(file_path)
 
-    # TODO:
-    # Call `show_tsne` to obtain points_transformed, targets
+    Y_predicted = predict_classes(model_at, X_test)
 
-    return points_transformed, targets
+    transformed_points, targets = show_tsne(
+        model_name + f"_l{n_layer}",
+        epoch,
+        layer_at,
+        Y_test[:size],
+        Y_predicted[:size],
+        init,
+    )
+
+    return transformed_points, targets
 
 
 def inter_layer_evolution(points_lst, targets):
